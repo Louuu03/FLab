@@ -1,4 +1,5 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 let phonebook = [
@@ -24,8 +25,23 @@ let phonebook = [
     }
 ]
 
+// Custom token for logging port number
+morgan.token('PORT', (req, res) => {
+    return PORT;
+  });
+  
+  // Custom token for logging request body
+  morgan.token('req-body', (req, res) => {
+    return JSON.stringify(req.body);
+  });
+  
+  // Custom log format using the custom tokens
+  const logFormat = 'Server running on port :PORT\n:method :url :status - :response-time ms :req-body';
+  
+  
 app.use(express.json())
-
+app.use(morgan('tiny'))
+app.use(morgan(logFormat))
 
 //Capture request start time
 app.use((req, res, next) => {
