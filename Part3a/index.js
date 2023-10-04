@@ -55,5 +55,29 @@ app.get('/info', (req, res)=>{
     )
 })
 
+app.delete('/api/person/delete/:id',(req,res)=>{
+    const id = Number(req.params.id)
+    const index = phonebook.findIndex(item => item.id === id);
+
+    // If the person is not found, send a 404 Not Found response
+    if (index === -1) {
+        return res.status(404).json({ error: 'Person not found' });
+    }
+       // Create a new array excluding the person with the given id
+       const updatedPhonebook = phonebook.filter(item => item.id !== id);
+
+       // Update the ids of the remaining persons in the phonebook
+       const updatedPhonebookWithCorrectIds = updatedPhonebook.map((item, index) => ({
+           ...item,
+           id: index + 1
+       }));
+   
+       // Update the phonebook array with the modified data
+       phonebook = updatedPhonebookWithCorrectIds;
+   
+   
+    res.status(204).end()
+})
+
 const PORT = 3001
 app.listen(PORT)
