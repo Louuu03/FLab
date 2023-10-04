@@ -26,8 +26,26 @@ let phonebook = [
 
 app.use(express.json())
 
+app.use((req, res, next) => {
+    // Capture the request start time
+    req.startTime = Date.now();
+    next();
+});
+
 app.get('/api/people', (req, res)=>{
     res.json(phonebook)
+})
+
+app.get('/info', (req, res)=>{
+    const pplSum = phonebook.length;
+    const reqTime = Date(req.startTime)
+    res.send(`
+        <p>
+            Phonebook has info for ${pplSum} people
+            <br/>  
+            ${reqTime}
+        </p>`
+    )
 })
 
 const PORT = 3001
