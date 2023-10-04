@@ -36,6 +36,13 @@ app.get('/api/people', (req, res)=>{
     res.json(phonebook)
 })
 
+app.get('/api/person/:id', (req, res)=>{
+    const id = Number(req.params.id)
+    const person = phonebook.find((item)=>item.id === id)
+    console.log(person,!!person)
+    !person?res.status(404).end():res.json(person)
+})
+
 app.get('/info', (req, res)=>{
     const pplSum = phonebook.length;
     const reqTime = Date(req.startTime)
