@@ -26,16 +26,20 @@ let phonebook = [
 
 app.use(express.json())
 
+
+//Capture request start time
 app.use((req, res, next) => {
     // Capture the request start time
     req.startTime = Date.now();
     next();
 });
 
+//get all the info in the phone book
 app.get('/api/people', (req, res)=>{
     res.json(phonebook)
 })
 
+//get personal info from id
 app.get('/api/person/:id', (req, res)=>{
     const id = Number(req.params.id)
     const person = phonebook.find((item)=>item.id === id)
@@ -43,6 +47,7 @@ app.get('/api/person/:id', (req, res)=>{
     !person?res.status(404).end():res.json(person)
 })
 
+//get general info of all data
 app.get('/info', (req, res)=>{
     const pplSum = phonebook.length;
     const reqTime = Date(req.startTime)
@@ -55,6 +60,7 @@ app.get('/info', (req, res)=>{
     )
 })
 
+//delete person from id
 app.delete('/api/person/delete/:id',(req,res)=>{
     const id = Number(req.params.id)
     const index = phonebook.findIndex(item => item.id === id);
@@ -78,6 +84,30 @@ app.delete('/api/person/delete/:id',(req,res)=>{
    
     res.status(204).end()
 })
+
+app.post('/api/person/add', (req, res) => {
+    const { name, number } = req.body;
+
+    if (!name || !number) {
+        return res.status(400).json({ error: 'Name or Number is missing' });
+    }
+
+    if (phonebook.find(item => item.name === name) !== undefined) {
+        return res.status(400).json({ error: 'Name must be unique' });
+    }
+
+    const newData = {
+        id: Math.floor(Math.random() * 10000), // Use Math.floor to get an integer id
+        name: name,
+        number: number
+    };
+
+    phonebook.push(newData);
+
+    // Respond with 201 Created status and the new data
+    res.status(203).end();
+});
+
 
 const PORT = 3001
 app.listen(PORT)
